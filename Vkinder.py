@@ -17,7 +17,7 @@ params_count = 0  # параметр для загрузки анкет
 def increment():
     """Счетчик для загрузки анкет"""
     global params_count
-    params_count += 10
+    params_count += 20
     return params_count
 
 
