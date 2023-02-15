@@ -37,5 +37,11 @@ keyboard2.add_button(
     color=VkKeyboardColor.SECONDARY,
     payload={"type": "text", "text": "Закончить просмотр"})
 
+keyboard3 = VkKeyboard(one_time=False, inline=True)
+keyboard3.add_button(
+    label="Удалить историю",
+    color=VkKeyboardColor.SECONDARY,
+    payload={"type": "text", "text": "Удалить историю"})
+
 keyboard = json.dumps(keyboard, ensure_ascii=False).encode('utf-8')
 keyboard = str(keyboard.decode('utf-8'))

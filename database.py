@@ -39,6 +39,14 @@ def select(vk_id, seen_user_id):
         return cursor.fetchone()
 
 
+def drop_seen_users():
+    """Удаление таблицы"""
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """DROP TABLE  IF EXISTS seen_users CASCADE;"""
+        )
+
+
 with conn.cursor() as cur:
     def creating_database():
         create_table_seen_users(conn)

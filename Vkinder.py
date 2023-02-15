@@ -250,6 +250,8 @@ class VKBotSearch:
                     else:
                         continue
                 elif msg_text == 'Закончить просмотр':
+                    self.write_msg(user_id,
+                                   f'Жду дальнейших распоряжений!')
                     break
             if u >= len(res_li) - 1:
                 self.write_msg(user_id,
@@ -275,13 +277,15 @@ class VKBotSearch:
                 if msg_text == 'Еще варианты':
                     if u >= len(res_li) - 1:
                         self.write_msg(user_id,
-                                       f"Загруженные в мою память анкеты закончились.\n" 
-                                       f"К сожалению меня не научили запоминать введенные Вами параметры для загрузки следующих анкет.\n" 
+                                       f"Загруженные в мою память анкеты закончились.\n"
+                                       f"К сожалению меня не научили запоминать введенные Вами параметры для загрузки следующих анкет.\n"
                                        f"Будьте так любезны введите заново желаемые параметры и я загружу еще варианты для просмотра!")
                         self.send_info_about_users_individual_parameters(user_id)
                     else:
                         continue
                 elif msg_text == 'Закончить просмотр':
+                    self.write_msg(user_id,
+                                   f'Жду дальнейших распоряжений!')
                     break
             if u >= len(res_li) - 1:
                 self.write_msg(user_id,
