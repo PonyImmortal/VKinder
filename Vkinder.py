@@ -221,7 +221,6 @@ class VKBotSearch:
                 ]
                 all_persons.append(person)
                 count_list = len(all_persons)
-        print(count_list)
         print(
             f'Поиск пользователей закончен,всего найдено {count} пользователей. Загружаю для просмотра {count_list} пользователей')
         self.write_msg(user_id, f'Нашел для Вас несколько вариантов')
@@ -275,7 +274,10 @@ class VKBotSearch:
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
                     if u >= len(res_li) - 1:
-                        self.write_msg(user_id, f'Кажется на этом все...')
+                        self.write_msg(user_id,
+                                       f"Загруженные в мою память анкеты закончились.\n" 
+                                       f"К сожалению меня не научили запоминать введенные Вами параметры для загрузки следующих анкет.\n" 
+                                       f"Будьте так любезны введите заново желаемые параметры и я загружу еще варианты для просмотра!")
                         self.send_info_about_users_individual_parameters(user_id)
                     else:
                         continue
@@ -283,10 +285,12 @@ class VKBotSearch:
                     break
             if u >= len(res_li) - 1:
                 self.write_msg(user_id,
-                               f'Секунду, отсортировываю уже просмотренные вами анкеты... Чтобы мне подгрузить еще варианты, повторите ввод параметров!')
+                               f"Секунду, отсортировываю уже просмотренные вами анкеты...\n"
+                               f"\nПохоже вы их уже просмотрели...\n"
+                               f"\nЧтобы мне подгрузить еще варианты, повторите ввод параметров!\n"
+                               )
                 print('Все загруженные в память анкеты просмотрены, подгружаю новые')
                 self.send_info_about_users_individual_parameters(user_id)
-
 
     # def last_seen(self, user_id):
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
