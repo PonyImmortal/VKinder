@@ -39,12 +39,11 @@ def select(vk_id, seen_user_id):
         return cursor.fetchone()
 
 
-def drop_seen_users():
+def drop_seen_users(user_id):
     """Удаление таблицы"""
     with conn.cursor() as cursor:
         cursor.execute(
-            """DROP TABLE  IF EXISTS seen_users CASCADE;"""
-        )
+            f"""DELETE FROM seen_users WHERE vk_id=%s;""", (user_id,))
 
 
 with conn.cursor() as cur:

@@ -14,7 +14,7 @@ for event in bot.longpoll.listen():
                           f'\n Чтобы удалить историю просмотра нажми "Удалить историю"', keyboard3.get_keyboard())
 
         elif request == 'удалить историю':
-            drop_seen_users()
+            drop_seen_users(user_id)
             bot.write_msg(user_id, f'Хорошо, {bot.name(user_id)} ваша история удалена!')
 
         elif request == 'начать автоматический поиск':
