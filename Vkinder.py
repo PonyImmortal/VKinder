@@ -196,7 +196,7 @@ class VKBotSearch:
         print(
             f'Поиск пользователей закончен,всего найдено {count} пользователей. Загружаю для просмотра {count_list} пользователей')
         self.write_msg(user_id, f'Нашел для Вас несколько вариантов')
-        return all_persons
+        return all_persons, count_list
 
     def search_users_individual_parameters(self, user_id):
         method = 'users.search'
@@ -221,13 +221,14 @@ class VKBotSearch:
                 ]
                 all_persons.append(person)
                 count_list = len(all_persons)
+        print(count_list)
         print(
             f'Поиск пользователей закончен,всего найдено {count} пользователей. Загружаю для просмотра {count_list} пользователей')
         self.write_msg(user_id, f'Нашел для Вас несколько вариантов')
-        return all_persons
+        return all_persons, count_list
 
     def send_info_about_users(self, user_id):
-        res_li = self.search_users(user_id)
+        res_li, count_list = self.search_users(user_id)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
                 insert_data_seen_users(user_id, res_li[u][3])
@@ -246,6 +247,7 @@ class VKBotSearch:
                         self.write_msg(user_id,
                                        f'Секунду, подготавливаю к просмотру анкеты...')
                         self.send_info_about_users(user_id)
+
                     else:
                         continue
                 elif msg_text == 'Закончить просмотр':
@@ -257,7 +259,7 @@ class VKBotSearch:
                 self.send_info_about_users(user_id)
 
     def send_info_about_users_individual_parameters(self, user_id):
-        res_li = self.search_users_individual_parameters(user_id)
+        res_li, count_list = self.search_users_individual_parameters(user_id)
         print(res_li)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
@@ -273,8 +275,7 @@ class VKBotSearch:
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
                     if u >= len(res_li) - 1:
-                        self.write_msg(user_id,
-                                       f'Секунду, подготавливаю к просмотру анкеты...')
+                        self.write_msg(user_id, f'Кажется на этом все...')
                         self.send_info_about_users_individual_parameters(user_id)
                     else:
                         continue
@@ -282,9 +283,10 @@ class VKBotSearch:
                     break
             if u >= len(res_li) - 1:
                 self.write_msg(user_id,
-                               f'Секунду, отсортировываю уже просмотренные вами анкеты...')
+                               f'Секунду, отсортировываю уже просмотренные вами анкеты... Чтобы мне подгрузить еще варианты, повторите ввод параметров!')
                 print('Все загруженные в память анкеты просмотрены, подгружаю новые')
                 self.send_info_about_users_individual_parameters(user_id)
+
 
     # def last_seen(self, user_id):
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
