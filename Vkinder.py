@@ -128,10 +128,7 @@ class VKBotSearch:
                 hometown = event.text
                 for city in self.data.get_cities(user_id):
                     if city['title'] == hometown.title():
-                        return self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
-                    else:
-                        # self.write_msg(user_id, f'Не нахожу такого города, повторите ввод!')
-                        break  # добавить неправильный ввод города
+                        self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
                 return hometown.title()
 
     def find_user_params(self, user_id):
@@ -195,7 +192,12 @@ class VKBotSearch:
                 count_list = len(all_persons)
         print(
             f'Поиск пользователей закончен,всего найдено {count} пользователей. Загружаю для просмотра {count_list} пользователей')
-        self.write_msg(user_id, f'Нашел для Вас несколько вариантов')
+        if count == 0:
+            self.write_msg(user_id, f"К сожалению нет подходящих кандидатов")
+            print('Нет подходящих кандидатов')
+        else:
+            self.write_msg(user_id,
+                           f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
         return all_persons, count_list, count
 
     def search_users_individual_parameters(self, user_id):
@@ -220,16 +222,19 @@ class VKBotSearch:
                     attach
                 ]
                 all_persons.append(person)
-                count_list = len(all_persons)
+                count_list = int(len(all_persons))
         print(
             f'Поиск пользователей закончен,всего найдено {count} пользователей. Загружаю для просмотра {count_list} пользователей')
-        self.write_msg(user_id,
-                       f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
+        if count == 0:
+            self.write_msg(user_id, f"К сожалению нет подходящих кандидатов")
+            print('Нет подходящих кандидатов')
+        else:
+            self.write_msg(user_id,
+                           f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
         return all_persons, count_list, count
 
     def send_info_about_users(self, user_id):
         res_li, count_list, count = self.search_users(user_id)
-        print(count)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
                 insert_data_seen_users(user_id, res_li[u][3])
@@ -260,14 +265,9 @@ class VKBotSearch:
                                f'\nВсе анкеты просмотрены... ')
                 print('Все анкеты просмотрены')
                 break
-        if count == 0:
-            self.write_msg(user_id,
-                           f"К сожалению нет подходящих кандидатов\n"
-                           )
 
     def send_info_about_users_individual_parameters(self, user_id):
         res_li, count_list, count = self.search_users_individual_parameters(user_id)
-        print(res_li)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
                 insert_data_seen_users(user_id, res_li[u][3])
@@ -298,12 +298,10 @@ class VKBotSearch:
                                f"Секунду, отсортировываю уже просмотренные вами анкеты...\n"
                                f"\nПохоже вы уже просмотрели все анкеты...\n"
                                )
-                print('Все загруженные в память анкеты просмотрены')
+                print('Все анкеты просмотрены')
                 break
-        if count == 0:
-            self.write_msg(user_id,
-                           f"К сожалению нет подходящих кандидатов\n"
-                           )
+
+
 
     # def last_seen(self, user_id):
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
