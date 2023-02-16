@@ -174,8 +174,8 @@ class VKBotSearch:
         url = f'https://api.vk.com/method/{method}'
         res = requests.get(url, self.find_user_params(user_id)).json()
         user_url = f'https://vk.com/id'
-        count = res['response']['count']
-        count_list = []
+        count = res['response']['count']  # считаем сколько всего найдено анкет
+        count_list = []  # считаем сколько анкет с открытым профилем и хотя бы одной фотографией
         for element in tqdm(res['response'].get('items'), desc="Loading: ", ncols=100, colour='green'):
 
             profile_pics = self.data.get_photos_id(element['id'])
@@ -208,8 +208,8 @@ class VKBotSearch:
         url = f'https://api.vk.com/method/{method}'
         res = requests.get(url, self.find_user_individual_parameters(user_id)).json()
         user_url = f'https://vk.com/id'
-        count = res['response']['count']
-        count_list = []
+        count = res['response']['count']  # считаем сколько всего найдено анкет
+        count_list = []  # считаем сколько анкет с открытым профилем и хотя бы одной фотографией
         for element in tqdm(res['response'].get('items'), desc="Loading: ", ncols=100, colour='green'):
             profile_pics = self.data.get_photos_id(element['id'])
             if profile_pics:
@@ -238,8 +238,8 @@ class VKBotSearch:
     def send_info_about_users(self, user_id):
         res_li = self.search_users(user_id)
         for u in range(len(res_li)):
-            if select(user_id, res_li[u][3]) is None:
-                insert_data_seen_users(user_id, res_li[u][3])
+            if select(user_id, res_li[u][3]) is None:  # проверяем просматривал ли пользователь анкету
+                insert_data_seen_users(user_id, res_li[u][3])  # если нет, добавляем в базу, как просмотренную
                 self.write_msg(user_id,
                                f'\n{res_li[u][0]}  {res_li[u][1]}  {res_li[u][2]}',
                                attachment={res_li[u][4]})
@@ -251,7 +251,7 @@ class VKBotSearch:
                                keyboard2.get_keyboard())
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
-                    if u >= len(res_li) - 1:
+                    if u >= len(res_li) - 1:  # проверяем на последнюю загруженную в память анкету
                         self.write_msg(user_id,
                                        f'Секунду, подготавливаю к просмотру анкеты...')
                         self.send_info_about_users(user_id)
@@ -261,7 +261,7 @@ class VKBotSearch:
                     self.write_msg(user_id,
                                    f'Жду дальнейших распоряжений!')
                     break
-            if u >= len(res_li) - 1:
+            if u >= len(res_li) - 1:  # проверяем на последнюю анкету вообще
                 self.write_msg(user_id,
                                f'Секунду, отсортировываю уже просмотренные вами анкеты...\n'
                                f'\nВсе анкеты просмотрены... ')
@@ -271,8 +271,8 @@ class VKBotSearch:
     def send_info_about_users_individual_parameters(self, user_id):
         res_li = self.search_users_individual_parameters(user_id)
         for u in range(len(res_li)):
-            if select(user_id, res_li[u][3]) is None:
-                insert_data_seen_users(user_id, res_li[u][3])
+            if select(user_id, res_li[u][3]) is None:  # проверяем просматривал ли пользователь анкету
+                insert_data_seen_users(user_id, res_li[u][3])  # если нет, добавляем в базу, как просмотренную
                 self.write_msg(user_id,
                                f'\n{res_li[u][0]}  {res_li[u][1]}  {res_li[u][2]}',
                                attachment={res_li[u][4]})
@@ -283,7 +283,7 @@ class VKBotSearch:
                                keyboard2.get_keyboard())
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
-                    if u >= len(res_li) - 1:
+                    if u >= len(res_li) - 1:  # проверяем на последнюю загруженную в память анкету
                         self.write_msg(user_id,
                                        f"Загруженные в мою память анкеты закончились.\n"
                                        f"К сожалению меня не научили запоминать введенные Вами параметры для загрузки следующих анкет.\n"
@@ -295,7 +295,7 @@ class VKBotSearch:
                     self.write_msg(user_id,
                                    f'Жду дальнейших распоряжений!')
                     break
-            if u >= len(res_li) - 1:
+            if u >= len(res_li) - 1:  # проверяем на последнюю анкету вообще
                 self.write_msg(user_id,
                                f"Секунду, отсортировываю уже просмотренные вами анкеты...\n"
                                f"\nПохоже вы уже просмотрели все анкеты...\n"
