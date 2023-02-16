@@ -129,7 +129,9 @@ class VKBotSearch:
                 for city in self.data.get_cities(user_id):
                     if city['title'] == hometown.title():
                         self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
-                return hometown.title()
+                        return hometown.title()
+                    else:
+                        pass
 
     def find_user_params(self, user_id):
         """Поиск людей по полученным данным для автоматического поиска"""
@@ -300,8 +302,6 @@ class VKBotSearch:
                                )
                 print('Все анкеты просмотрены')
                 break
-
-
 
     # def last_seen(self, user_id):
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
