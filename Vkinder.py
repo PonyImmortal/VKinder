@@ -70,8 +70,7 @@ class VKBotSearch:
             return msg_text
         else:
             self.write_msg(user_id, 'Некорректный ввод')
-            self.get_sex_individual_parameters(user_id)
-            return msg_text
+            return self.get_sex_individual_parameters(user_id)
 
     def get_age(self, user_id):
         """Функция получения возраста для автоматического подбора"""
@@ -200,7 +199,7 @@ class VKBotSearch:
         else:
             self.write_msg(user_id,
                            f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
-        return all_persons, count_list, count
+        return all_persons
 
     def search_users_individual_parameters(self, user_id):
         method = 'users.search'
@@ -233,10 +232,10 @@ class VKBotSearch:
         else:
             self.write_msg(user_id,
                            f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
-        return all_persons, count_list, count
+        return all_persons
 
     def send_info_about_users(self, user_id):
-        res_li, count_list, count = self.search_users(user_id)
+        res_li = self.search_users(user_id)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
                 insert_data_seen_users(user_id, res_li[u][3])
@@ -269,7 +268,7 @@ class VKBotSearch:
                 break
 
     def send_info_about_users_individual_parameters(self, user_id):
-        res_li, count_list, count = self.search_users_individual_parameters(user_id)
+        res_li = self.search_users_individual_parameters(user_id)
         for u in range(len(res_li)):
             if select(user_id, res_li[u][3]) is None:
                 insert_data_seen_users(user_id, res_li[u][3])
