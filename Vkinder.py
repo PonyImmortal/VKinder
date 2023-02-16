@@ -130,7 +130,8 @@ class VKBotSearch:
                         self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
                         return hometown.title()
                     else:
-                        pass
+                        self.write_msg(user_id, 'Некорректный ввод')
+                        return self.find_city_individual_parameters(user_id)
 
     def find_user_params(self, user_id):
         """Поиск людей по полученным данным для автоматического поиска"""
