@@ -80,12 +80,13 @@ class VKBotSearch:
             age = int(datetime.date.today().year) - int(bdate[2])
             age_from = str(age - 1)
             age_to = str(age + 1)
-            return {'age_from': age_from, 'age_to': age_to}
-
         elif len(bdate) == 2:
             age_from = self.get_age_low(user_id)
             age_to = self.get_age_high(user_id)
-            return {'age_from': age_from, 'age_to': age_to}
+        else:
+            return None
+
+        return age_from, age_to
 
     def get_age_low(self, user_id):
         """Функция получения возраста по нижней границе для индивидуального подбора"""
@@ -94,8 +95,7 @@ class VKBotSearch:
         age_from = int(msg_text)
         if age_from < 18:
             self.write_msg(user_id, 'Некорректный ввод')
-            self.get_age_low(user_id)
-            return age_from
+            return self.get_age_low(user_id)
         else:
             return age_from
 
@@ -106,8 +106,7 @@ class VKBotSearch:
         age_to = int(msg_text)
         if age_to > 99:
             self.write_msg(user_id, 'Некорректный ввод')
-            self.get_age_high(user_id)
-            return age_to
+            return self.get_age_high(user_id)
         else:
             return age_to
 
@@ -122,25 +121,27 @@ class VKBotSearch:
     def find_city_individual_parameters(self, user_id):
         """Функция получения города для индивидуального подбора"""
         self.write_msg(user_id, 'Введите название города для поиска: ')
-        for event in self.longpoll.listen():
-            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                hometown = event.text
-                for city in self.data.get_cities(user_id):
-                    if city['title'] == hometown.title():
-                        self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
-                        return hometown.title()
-                    else:
-                        self.write_msg(user_id, 'Некорректный ввод')
-                        return self.find_city_individual_parameters(user_id)
+        msg_text, user_id = self.loop_bot()
+        hometown = str(msg_text)
+        cities = self.data.get_cities(user_id)
+        print(cities)
+        for city in cities:
+            if city['title'] == hometown.title():
+                self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
+                return hometown.title()
+
+        self.write_msg(user_id, 'Некорректный ввод')
+        self.find_city_individual_parameters(user_id)
 
     def find_user_params(self, user_id):
         """Поиск людей по полученным данным для автоматического поиска"""
         fields = 'id, sex, bdate, city, relation'
+        age_from, age_to = self.get_age(user_id)
         params = {'access_token': user_token,
                   'v': '5.131',
                   'sex': self.get_sex(user_id),
-                  'age_from': self.get_age(user_id)['age_from'],
-                  'age_to': self.get_age(user_id)['age_to'],
+                  'age_from': age_from,
+                  'age_to': age_to,
                   'country_id': '1',
                   'hometown': self.find_city(user_id),
                   'fields': fields,

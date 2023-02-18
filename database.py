@@ -10,7 +10,7 @@ class SeenUsers(Base):
 
     id = sq.Column(sq.Integer, primary_key=True)
     vk_id = sq.Column(sq.Integer, unique=False)
-    seen_user_id = sq.Column(sq.Integer, unique=True)
+    seen_user_id = sq.Column(sq.Integer, unique=False)
 
 
 def create_table_seen_users(engine):

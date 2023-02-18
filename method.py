@@ -12,7 +12,7 @@ class Data:
         method = 'database.getCities'
         params = {'country_id': 1,
                   'need_all': 0,
-                  'count': 500,
+                  'count': 1000,
                   'user_id': user_id,
                   'access_token': user_token,
                   'v': '5.131',
