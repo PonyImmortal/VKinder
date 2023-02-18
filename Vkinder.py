@@ -7,18 +7,19 @@ import vk_api
 from tqdm import tqdm
 from vk_api.longpoll import VkEventType, VkLongPoll
 
+from config import comm_token, user_token
 from database import *
 from keyboard import keyboard1, keyboard2
 from method import Data
 
-params_count = 0  # параметр для загрузки анкет
+PARAMS_COUNT = 0  # параметр для загрузки анкет
 
 
 def increment():
     """Счетчик для загрузки анкет"""
-    global params_count
-    params_count += 20
-    return params_count
+    global PARAMS_COUNT
+    PARAMS_COUNT += 20
+    return PARAMS_COUNT
 
 
 class VKBotSearch:
@@ -118,9 +119,8 @@ class VKBotSearch:
             hometown = self.data.get_info_user(user_id)['city']['title']
             return hometown
 
-    """Функция получения города для индивидуального подбора"""
-
     def find_city_individual_parameters(self, user_id):
+        """Функция получения города для индивидуального подбора"""
         self.write_msg(user_id, 'Введите название города для поиска: ')
         for event in self.longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:

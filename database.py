@@ -1,51 +1,45 @@
-import psycopg2
-from config import *
+import sqlalchemy
+import sqlalchemy as sq
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-conn = psycopg2.connect(
-    user=user,
-    password=password,
-    database=db_name
-)
-
-conn.autocommit = True
+Base = declarative_base()
 
 
-def create_table_seen_users(conn):
-    """Создание таблицы просмотренные пользователи"""
-    cur = conn.cursor()
-    cur.execute(
-        """CREATE TABLE IF NOT EXISTS seen_users(
-            id serial,
-            vk_id INTEGER,
-            seen_user_id INTEGER);"""
-    )
+class SeenUsers(Base):
+    __tablename__ = "seen_users"
+
+    id = sq.Column(sq.Integer, primary_key=True)
+    vk_id = sq.Column(sq.Integer, unique=False)
+    seen_user_id = sq.Column(sq.Integer, unique=True)
+
+
+def create_table_seen_users(engine):
+    # Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+
+DSN = "postgresql://postgres:postgres@localhost:5432/vkorm"
+engine = sqlalchemy.create_engine(DSN)
+create_table_seen_users(engine)
+
+# сессия
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
 def insert_data_seen_users(vk_id, seen_user_id):
-    """Заполнение таблицы просмотренные пользователи"""
-    with conn.cursor() as cursor:
-        cursor.execute(
-            f"""INSERT INTO seen_users (vk_id, seen_user_id)
-            VALUES (%s, %s);""", (vk_id, seen_user_id)
-        )
+    seen_user = SeenUsers(vk_id=vk_id, seen_user_id=seen_user_id)
+    session.add(seen_user)
+    session.commit()
 
 
 def select(vk_id, seen_user_id):
-    """Подбор пользователей из непросмотренных"""
-    with conn.cursor() as cursor:
-        cursor.execute(
-            f"""SELECT vk_id, seen_user_id FROM seen_users WHERE vk_id=%s AND seen_user_id=%s;""",
-            (vk_id, seen_user_id))
-        return cursor.fetchone()
+    result = session.query(SeenUsers).filter(SeenUsers.vk_id == vk_id, SeenUsers.seen_user_id == seen_user_id).first()
+    session.close()
+
+    return result
 
 
 def drop_seen_users(user_id):
-    """Удаление таблицы"""
-    with conn.cursor() as cursor:
-        cursor.execute(
-            f"""DELETE FROM seen_users WHERE vk_id=%s;""", (user_id,))
-
-
-with conn.cursor() as cur:
-    def creating_database():
-        create_table_seen_users(conn)
+    session.query(SeenUsers).filter(SeenUsers.vk_id == user_id).delete()
+    session.commit()

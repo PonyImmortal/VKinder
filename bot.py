@@ -18,12 +18,12 @@ for event in bot.longpoll.listen():
             bot.write_msg(user_id, f'Хорошо, {bot.name(user_id)} ваша история удалена!')
 
         elif request == 'начать автоматический поиск':
-            creating_database()
+            create_table_seen_users(engine)
             bot.write_msg(user_id, f'Хорошо, {bot.name(user_id)} приступим')
             bot.send_info_about_users(user_id)
 
         elif request == 'начать поиск по заданным параметрам':
-            creating_database()
+            create_table_seen_users(engine)
             bot.write_msg(user_id, f'Хорошо, {bot.name(user_id)} приступим')
             bot.send_info_about_users_individual_parameters(user_id)
 
