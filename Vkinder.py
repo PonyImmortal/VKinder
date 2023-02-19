@@ -21,13 +21,15 @@ def profile_loading_counter(user_id):
         dictionary[user_id] += 20
     else:
         dictionary[user_id] = 20
-    print(dictionary)
     return dictionary[user_id]
 
 
 def reset_profile_loading_counter(user_id):
-    user_id = int(user_id)
-    dictionary.pop(user_id)
+    try:
+        user_id = int(user_id)
+        dictionary.pop(user_id)
+    except KeyError:
+        pass
 
 
 class VKBotSearch:
