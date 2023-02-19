@@ -12,14 +12,17 @@ from database import *
 from keyboard import keyboard1, keyboard2
 from method import Data
 
-PARAMS_COUNT = 0  # параметр для загрузки анкет
+dictionary = {}
 
 
-def increment():
-    """Счетчик для загрузки анкет"""
-    global PARAMS_COUNT
-    PARAMS_COUNT += 20
-    return PARAMS_COUNT
+def profile_loading_counter(user_id):
+    user_id = int(user_id)
+    if user_id in dictionary:
+        dictionary[user_id] += 20
+    else:
+        dictionary[user_id] = 20
+    print(dictionary)
+    return dictionary[user_id]
 
 
 class VKBotSearch:
@@ -146,7 +149,7 @@ class VKBotSearch:
                   'hometown': self.find_city(user_id),
                   'fields': fields,
                   'status': '1' or '6',
-                  'count': increment(),
+                  'count': profile_loading_counter(user_id),
                   'has_photo': '1',
                   'is_closed': False
                   }
@@ -163,7 +166,7 @@ class VKBotSearch:
                   'hometown': self.find_city_individual_parameters(user_id),
                   'fields': fields,
                   'status': '1' or '6',
-                  'count': increment(),
+                  'count': profile_loading_counter(user_id),
                   'has_photo': '1',
                   'is_closed': False
                   }
