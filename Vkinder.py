@@ -134,7 +134,6 @@ class VKBotSearch:
         msg_text, user_id = self.loop_bot()
         hometown = str(msg_text)
         cities = self.data.get_cities(user_id)
-        print(cities)
         for city in cities:
             if city['title'] == hometown.title():
                 self.write_msg(user_id, f'Ищу в городе {hometown.title()}')
@@ -246,15 +245,24 @@ class VKBotSearch:
                            f'Нашел для Вас несколько вариантов, проверяю есть ли фотографии и открыт ли профиль...')
         return all_persons
 
-    def send_info_about_users(self, user_id):
-        res_li = self.search_users(user_id)
-        for u in range(len(res_li)):
-            if select(user_id, res_li[u][3]) is None:  # проверяем просматривал ли пользователь анкету
-                insert_data_seen_users(user_id, res_li[u][3])  # если нет, добавляем в базу, как просмотренную
-                self.write_msg(user_id,
-                               f'\n{res_li[u][0]}  {res_li[u][1]}  {res_li[u][2]}',
-                               attachment={res_li[u][4]})
+    def sorted_users(self, user_id):
+        profiles = self.search_users(user_id)
+        profiles_to_send = []
+        while len(profiles) > 0:
+            profile = profiles.pop()
+            if select(user_id, profile[3]) is None:
+                insert_data_seen_users(user_id, profile[3])
+                profiles_to_send.append(profile)
+        return profiles_to_send
 
+    def send_info_about_users(self, user_id):
+        profiles_to_send = self.sorted_users(user_id)
+        if not profiles_to_send:
+            self.write_msg(user_id, f'Все анкеты просмотрены')
+        else:
+            while len(profiles_to_send) > 0:
+                profile = profiles_to_send.pop()
+                self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
                                keyboard1.get_keyboard())
                 self.write_msg(user_id,
@@ -262,31 +270,31 @@ class VKBotSearch:
                                keyboard2.get_keyboard())
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
-                    if u >= len(res_li) - 1:  # проверяем на последнюю загруженную в память анкету
-                        self.write_msg(user_id,
-                                       f'Секунду, подготавливаю к просмотру анкеты...')
-                        self.send_info_about_users(user_id)
-                    else:
-                        continue
-                elif msg_text == 'Закончить просмотр':
-                    self.write_msg(user_id,
-                                   f'Жду дальнейших распоряжений!')
+                    continue
+                else:
+                    self.write_msg(user_id, f'Жду дальнейших распоряжений!')
                     break
-            if u >= len(res_li) - 1:  # проверяем на последнюю анкету вообще
-                self.write_msg(user_id,
-                               f'Секунду, отсортировываю уже просмотренные вами анкеты...\n'
-                               f'\nВсе анкеты просмотрены... ')
-                print('Все анкеты просмотрены')
-                break
+            else:
+                self.send_info_about_users(user_id)
+
+    def sorted_users_individual_parameters(self, user_id):
+        profiles = self.search_users_individual_parameters(user_id)
+        profiles_to_send = []
+        while len(profiles) > 0:
+            profile = profiles.pop()
+            if select(user_id, profile[3]) is None:
+                insert_data_seen_users(user_id, profile[3])
+                profiles_to_send.append(profile)
+        return profiles_to_send
 
     def send_info_about_users_individual_parameters(self, user_id):
-        res_li = self.search_users_individual_parameters(user_id)
-        for u in range(len(res_li)):
-            if select(user_id, res_li[u][3]) is None:  # проверяем просматривал ли пользователь анкету
-                insert_data_seen_users(user_id, res_li[u][3])  # если нет, добавляем в базу, как просмотренную
-                self.write_msg(user_id,
-                               f'\n{res_li[u][0]}  {res_li[u][1]}  {res_li[u][2]}',
-                               attachment={res_li[u][4]})
+        profiles_to_send = self.sorted_users_individual_parameters(user_id)
+        if not profiles_to_send:
+            self.write_msg(user_id, f'Все анкеты просмотрены')
+        else:
+            while len(profiles_to_send) > 0:
+                profile = profiles_to_send.pop()
+                self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
                                keyboard1.get_keyboard())
                 self.write_msg(user_id,
@@ -294,25 +302,12 @@ class VKBotSearch:
                                keyboard2.get_keyboard())
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
-                    if u >= len(res_li) - 1:  # проверяем на последнюю загруженную в память анкету
-                        self.write_msg(user_id,
-                                       f"Загруженные в мою память анкеты закончились.\n"
-                                       f"К сожалению меня не научили запоминать введенные Вами параметры для загрузки следующих анкет.\n"
-                                       f"Будьте так любезны введите заново желаемые параметры и я загружу еще варианты для просмотра!")
-                        self.send_info_about_users_individual_parameters(user_id)
-                    else:
-                        continue
-                elif msg_text == 'Закончить просмотр':
-                    self.write_msg(user_id,
-                                   f'Жду дальнейших распоряжений!')
+                    continue
+                else:
+                    self.write_msg(user_id, f'Жду дальнейших распоряжений!')
                     break
-            if u >= len(res_li) - 1:  # проверяем на последнюю анкету вообще
-                self.write_msg(user_id,
-                               f"Секунду, отсортировываю уже просмотренные вами анкеты...\n"
-                               f"\nПохоже вы уже просмотрели все анкеты...\n"
-                               )
-                print('Все анкеты просмотрены')
-                break
+            else:
+                self.send_info_about_users_individual_parameters(user_id)
 
     # def last_seen(self, user_id):
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
