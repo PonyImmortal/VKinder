@@ -25,6 +25,11 @@ def profile_loading_counter(user_id):
     return dictionary[user_id]
 
 
+def reset_profile_loading_counter(user_id):
+    user_id = int(user_id)
+    dictionary.pop(user_id)
+
+
 class VKBotSearch:
     def __init__(self):
         print('Бот запущен')
