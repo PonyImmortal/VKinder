@@ -143,7 +143,7 @@ class VKBotSearch:
         self.find_city_individual_parameters(user_id)
 
     def find_user_params(self, user_id):
-        """Поиск людей по полученным данным для автоматического поиска"""
+        """Параметры для автоматического поиска"""
         fields = 'id, sex, bdate, city, relation'
         age_from, age_to = self.get_age(user_id)
         params = {'access_token': user_token,
@@ -162,6 +162,7 @@ class VKBotSearch:
         return params
 
     def find_user_individual_parameters(self, user_id):
+        """Параметры для поиска по заданным параметрам"""
         fields = 'id, sex, bdate, city, relation'
         params = {'access_token': user_token,
                   'v': '5.131',
@@ -179,6 +180,7 @@ class VKBotSearch:
         return params
 
     def search_users(self, user_id):
+        """Поиск людей по полученным данным для автоматического поиска"""
         method = 'users.search'
         all_persons = []
         url = f'https://api.vk.com/method/{method}'
@@ -213,6 +215,7 @@ class VKBotSearch:
         return all_persons
 
     def search_users_individual_parameters(self, user_id):
+        """Поиск людей по полученным данным для поиска по заданным параметрам"""
         method = 'users.search'
         all_persons = []
         url = f'https://api.vk.com/method/{method}'
@@ -246,15 +249,17 @@ class VKBotSearch:
         return all_persons
 
     def sorted_users(self, user_id):
+        """Подготовка отсортированного списка профилей к просмотру"""
         profiles = self.search_users(user_id)
         profiles_to_send = []
         while len(profiles) > 0:
             profile = profiles.pop()
-            if select(user_id, profile[3]) is None:
+            if select(user_id, profile[3]) is None:  # проверяем нет ли найденного профиля в таблице просмотренных
                 profiles_to_send.append(profile)
         return profiles_to_send
 
     def send_info_about_users(self, user_id):
+        """Отправка информации пользователю"""
         profiles_to_send = self.sorted_users(user_id)
         if not profiles_to_send:
             self.write_msg(user_id, f'Все анкеты просмотрены')
@@ -278,6 +283,7 @@ class VKBotSearch:
                 self.send_info_about_users(user_id)
 
     def sorted_users_individual_parameters(self, user_id):
+        """Подготовка отсортированного списка профилей к просмотру"""
         profiles = self.search_users_individual_parameters(user_id)
         profiles_to_send = []
         while len(profiles) > 0:
@@ -287,6 +293,7 @@ class VKBotSearch:
         return profiles_to_send
 
     def send_info_about_users_individual_parameters(self, user_id):
+        """Отправка информации пользователю"""
         profiles_to_send = self.sorted_users_individual_parameters(user_id)
         if not profiles_to_send:
             self.write_msg(user_id, f'Все анкеты просмотрены')
@@ -310,6 +317,7 @@ class VKBotSearch:
                 self.send_info_about_users_individual_parameters(user_id)
 
     # def last_seen(self, user_id):
+    # """Функция завершения диалога с пользователем"""
     #     last_seen = self.data.get_info_user(user_id)['last_seen']
     #     while True:
     #         if last_seen['time'] + 1 < int(time.time()):
