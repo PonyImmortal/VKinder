@@ -27,4 +27,4 @@ for event in bot.longpoll.listen():
             bot.send_info_about_users_individual_parameters(user_id)
 
         else:
-            bot.write_msg(user_id, 'Я не понимаю вас, повторите запрос')
+            bot.write_msg(event.user_id, 'Я не понимаю вас, повторите запрос')
