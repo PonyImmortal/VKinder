@@ -40,10 +40,10 @@ class VKBotSearch:
         self.data = Data()
 
     def loop_bot(self):
-        for this_event in self.longpoll.listen():
-            if this_event.type == VkEventType.MESSAGE_NEW and this_event.to_me:
-                message_text = this_event.text
-                return message_text, this_event.user_id
+        for event in self.longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                message_text = event.text
+                return message_text, event.user_id
 
     def write_msg(self, user_id, message, keyboard=None, attachment=None):
         """SendMessage"""
@@ -251,7 +251,6 @@ class VKBotSearch:
         while len(profiles) > 0:
             profile = profiles.pop()
             if select(user_id, profile[3]) is None:
-                insert_data_seen_users(user_id, profile[3])
                 profiles_to_send.append(profile)
         return profiles_to_send
 
@@ -262,6 +261,7 @@ class VKBotSearch:
         else:
             while len(profiles_to_send) > 0:
                 profile = profiles_to_send.pop()
+                insert_data_seen_users(user_id, profile[3])
                 self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
                                keyboard1.get_keyboard())
@@ -283,7 +283,6 @@ class VKBotSearch:
         while len(profiles) > 0:
             profile = profiles.pop()
             if select(user_id, profile[3]) is None:
-                insert_data_seen_users(user_id, profile[3])
                 profiles_to_send.append(profile)
         return profiles_to_send
 
@@ -294,6 +293,7 @@ class VKBotSearch:
         else:
             while len(profiles_to_send) > 0:
                 profile = profiles_to_send.pop()
+                insert_data_seen_users(user_id, profile[3])
                 self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
                                keyboard1.get_keyboard())
