@@ -1,10 +1,19 @@
 from Vkinder import *
 from keyboard import keyboard3
+import signal
+
+
+def goodbye(signum, frame):
+    bot.write_msg(user_id, 'До свидания')
+
 
 for event in bot.longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
         message_text = event.text.lower()
         user_id = str(event.user_id)
+
+        signal.signal(signal.SIGALRM, handler=goodbye)
+        signal.alarm(60)
 
         if message_text == 'нажми, чтобы узнать что я умею \N{smiling face with sunglasses}':
             bot.write_msg(user_id,
