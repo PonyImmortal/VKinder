@@ -1,28 +1,11 @@
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-
 import json
 
-
-def get_button(text, color):
-    return {
-        "action": {
-            "type": "text",
-            "payload": "{\"button\": \"" + "1" + "\"}",
-            "label": f"{text}"
-        },
-        "color": f"{color}",
-    }
-
-
-keyboard = {
-    "one_time": False,
-    "inline": False,
-    "buttons": [
-        [get_button('Нажми, чтобы узнать что я умею \N{smiling face with sunglasses}', 'primary')],
-        [get_button('Начать автоматический поиск', 'positive', )],
-        [get_button('Начать поиск по заданным параметрам', 'positive')],
-    ]
-}
+keyboard = VkKeyboard(one_time=False, inline=False)
+keyboard.add_button("Нажми, чтобы узнать что я умею \N{smiling face with sunglasses}", VkKeyboardColor.PRIMARY)
+keyboard.add_button("Начать автоматический поиск", VkKeyboardColor.POSITIVE)
+keyboard.add_button("Начать поиск по заданным параметрам", VkKeyboardColor.POSITIVE)
+keyboard = keyboard.get_keyboard()
 
 keyboard1 = VkKeyboard(one_time=False, inline=True)
 keyboard1.add_button(
@@ -43,5 +26,5 @@ keyboard3.add_button(
     color=VkKeyboardColor.SECONDARY,
     payload={"type": "text", "text": "Удалить историю"})
 
-keyboard = json.dumps(keyboard, ensure_ascii=False).encode('utf-8')
-keyboard = str(keyboard.decode('utf-8'))
+keyboard = json.dumps(keyboard, ensure_ascii=False)
+
