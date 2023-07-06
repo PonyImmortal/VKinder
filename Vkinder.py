@@ -1,5 +1,4 @@
 import datetime
-import time
 from random import randrange
 
 import requests
@@ -9,7 +8,7 @@ from vk_api.longpoll import VkEventType, VkLongPoll
 
 from config import comm_token, user_token
 from database import *
-from keyboard import keyboard1, keyboard2
+from keyboard import keyboard1, keyboard2, main_keyboard
 from method import Data
 
 dictionary = {}
@@ -45,7 +44,7 @@ class VKBotSearch:
                 message_text = event.text
                 return message_text, event.user_id
 
-    def write_msg(self, user_id, message, keyboard=None, attachment=None):
+    def write_msg(self, user_id, message, keyboard=main_keyboard, attachment=None):
         """SendMessage"""
         self.vk.method('messages.send', {'user_id': user_id,
                                          'message': message,
@@ -269,10 +268,10 @@ class VKBotSearch:
                 insert_data_seen_users(user_id, profile[3])
                 self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
-                               keyboard1.get_keyboard())
+                               keyboard=keyboard1)
                 self.write_msg(user_id,
                                f'Чтобы начать новый поиск, или просмотреть, что я умею нажми "Закончить просмотр"',
-                               keyboard2.get_keyboard())
+                               keyboard=keyboard2)
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
                     continue
@@ -315,14 +314,6 @@ class VKBotSearch:
                     break
             else:
                 self.send_info_about_users_individual_parameters(user_id)
-
-    # def last_seen(self, user_id):
-    # """Функция завершения диалога с пользователем"""
-    #     last_seen = self.data.get_info_user(user_id)['last_seen']
-    #     while True:
-    #         if last_seen['time'] + 1 < int(time.time()):
-    #             self.write_msg(user_id, 'До свидания')
-    #             break
 
 
 bot = VKBotSearch()
