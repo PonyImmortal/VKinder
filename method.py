@@ -3,7 +3,7 @@ from config import user_token
 
 
 class Data:
-    def __int__(self):
+    def __init__(self):
         self.user_token = user_token
 
     def get_cities(self, user_id):
