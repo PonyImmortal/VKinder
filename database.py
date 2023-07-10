@@ -1,6 +1,7 @@
 import sqlalchemy
 import sqlalchemy as sq
 from sqlalchemy.orm import declarative_base, sessionmaker
+from config import DSN
 
 Base = declarative_base()
 
@@ -17,8 +18,6 @@ def create_table_seen_users(engine):
     # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
-
-DSN = "postgresql://postgres:postgres@localhost:5432/vkorm"
 engine = sqlalchemy.create_engine(DSN)
 create_table_seen_users(engine)
 

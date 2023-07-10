@@ -6,7 +6,7 @@ import vk_api
 from tqdm import tqdm
 from vk_api.longpoll import VkEventType, VkLongPoll
 
-from config import comm_token, user_token
+from config import user_token, comm_token
 from database import *
 from keyboard import keyboard1, keyboard2, main_keyboard
 from method import Data

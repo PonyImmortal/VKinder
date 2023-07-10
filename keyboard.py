@@ -1,5 +1,4 @@
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-import json
 
 main_keyboard = VkKeyboard(one_time=False, inline=False)
 main_keyboard.add_button("Нажми, чтобы узнать что я умею \N{smiling face with sunglasses}", color=VkKeyboardColor.PRIMARY)
