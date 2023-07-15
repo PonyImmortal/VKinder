@@ -6,9 +6,8 @@ postgres_data/
 
 *.log
 *.env
-*.yml
-*.yaml
+
 
 .idea/
 *.yml
-*.yml
+
