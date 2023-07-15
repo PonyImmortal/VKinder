@@ -13,6 +13,6 @@ DSN = os.getenv('DSN')
 if user_token is None or comm_token is None or DSN is None:
     print("Ошибка чтения токенов из файла config.env")
 else:
-    print("Токены успешно прочитаны:")
+    print("Токены успешно прочитаны")
 
 

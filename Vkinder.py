@@ -3,7 +3,6 @@ from random import randrange
 
 import requests
 import vk_api
-from tqdm import tqdm
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 from config import user_token, comm_token
@@ -187,7 +186,7 @@ class VKBotSearch:
         user_url = f'https://vk.com/id'
         count = res['response']['count']  # считаем сколько всего найдено анкет
         count_list = []  # считаем сколько анкет с открытым профилем и хотя бы одной фотографией
-        for element in tqdm(res['response'].get('items'), desc="Loading: ", ncols=100, colour='green'):
+        for element in res['response'].get('items'):
 
             profile_pics = self.data.get_photos_id(element['id'])
             if profile_pics:
@@ -222,7 +221,7 @@ class VKBotSearch:
         user_url = f'https://vk.com/id'
         count = res['response']['count']  # считаем сколько всего найдено анкет
         count_list = []  # считаем сколько анкет с открытым профилем и хотя бы одной фотографией
-        for element in tqdm(res['response'].get('items'), desc="Loading: ", ncols=100, colour='green'):
+        for element in res['response'].get('items'):
             profile_pics = self.data.get_photos_id(element['id'])
             if profile_pics:
                 attach = ''
@@ -302,10 +301,10 @@ class VKBotSearch:
                 insert_data_seen_users(user_id, profile[3])
                 self.write_msg(user_id, f'\n{profile[0]}  {profile[1]}  {profile[2]}', attachment={profile[4]})
                 self.write_msg(user_id, f'Посмотрите, как Вам этот кандидат? Не нравится, жми "Еще варианты!"',
-                               keyboard1.get_keyboard())
+                               keyboard=keyboard1)
                 self.write_msg(user_id,
                                f'Чтобы начать новый поиск, или просмотреть, что я умею нажми "Закончить просмотр"',
-                               keyboard2.get_keyboard())
+                               keyboard=keyboard2)
                 msg_text, user_id = self.loop_bot()
                 if msg_text == 'Еще варианты':
                     continue
