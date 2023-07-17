@@ -1,36 +1,39 @@
 version: '3.9'
 services:
-your_app:
-build: .
-depends_on:
-- db
-environment:
-- DB_HOST=db
-- DB_PORT=5432
-- DB_NAME=<database_name>
-- DB_USER=<database_user>
-- DB_PASSWORD=<database_password>
-volumes:
-- ./<your_app_files_directory>:/app
+  your_app:
+    container_name: your_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=example_db
+      - DB_USER=example_user
+      - DB_PASSWORD=example_password
+    volumes:
+      - /path/to/your/app:/app
 
-db:
-container_name: pg_db
-image: postgres:14-alpine
-restart: always
-environment:
-- POSTGRES_DB=<database_name>
-- POSTGRES_USER=<database_user>
-- POSTGRES_PASSWORD=<database_password>
-volumes:
-- ./postgres_data:/var/lib/postgresql/data/
-ports:
-- 5432:5432
+  db:
+    container_name: pg_db
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=example_db
+      - POSTGRES_USER=example_user
+      - POSTGRES_PASSWORD=example_password
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
 
-pgadmin:
-container_name: pgadmin
-image: dpage/pgadmin4
-environment:
-PGADMIN_DEFAULT_EMAIL: <admin_email>
-PGADMIN_DEFAULT_PASSWORD: <admin_password>
-ports:
-- 5050:80
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=example@example.com
+      - PGADMIN_DEFAULT_PASSWORD=example_password
+    ports:
+      - 5050:80
