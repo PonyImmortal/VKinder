@@ -9,6 +9,6 @@ RUN pip install -r requirements.txt
 
 RUN apt-get update && apt-get install -y postgresql
 
-COPY . .
+COPY bot.py .
 
-CMD [ "python", "bot.py" ]
+CMD [ "python", "/app/bot.py" ]
