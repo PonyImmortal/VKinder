@@ -1,6 +1,7 @@
 version: '3.9'
 services:
   your_app:
+    restart: always
     container_name: your_app
     build:
       context: .
