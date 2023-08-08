@@ -1,8 +1,12 @@
 version: '3.9'
+
+networks:
+  mynetwork:
+    driver: bridge
+
 services:
   your_app:
-    restart: always
-    container_name: your_app
+    container_name: VKBot
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,30 +15,42 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=example_db
+      - DB_NAME=example_db_name
       - DB_USER=example_user
-      - DB_PASSWORD=example_password
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - /path/to/your/app:/app
+    networks:
+      - mynetwork
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   db:
     container_name: pg_db
-    image: postgres:14-alpine
+    image: postgres:14
     restart: always
     environment:
-      - POSTGRES_DB=example_db
+      - POSTGRES_DB=example_db_name
       - POSTGRES_USER=example_user
-      - POSTGRES_PASSWORD=example_password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
+      - ./path/to/your/postgres_data:/var/lib/postgresql/data/
     ports:
       - 5433:5432
+    networks:
+      - mynetwork
 
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=example@example.com
-      - PGADMIN_DEFAULT_PASSWORD=example_password
+      - PGADMIN_DEFAULT_EMAIL=example@email.com
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
       - 5050:80
+    networks:
+      - mynetwork
+
